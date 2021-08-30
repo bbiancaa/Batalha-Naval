@@ -1,6 +1,5 @@
 .data
 
-msg_comum:						.asciz "Entre com o valor de "
 ships:							.asciz "3\n1511\n0522\n0164"
 n:							.asciz "\n"	
 lines:							.word 10
