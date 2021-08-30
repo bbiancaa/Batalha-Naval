@@ -10,11 +10,12 @@ matriz:							.word 100 #pensando em uma maneira diferente de salvar os valores
 .text
 main:
 	la	a1, ships				# lê endereço do vetor
-	la	s0, matriz
+	la	s0, matriz				# le matriz para ser escrita
+	la	s8, matriz				# le matriz para ser printada
 	la 	s1, columns
-	add	s3, s3, zero
-	addi	s4, s4, 10
-	addi	s5, s5, 100
+	add	s3, s3, zero				# autoincrement para for de printar
+	addi	s4, s4, 10				# valor para adicionar \n
+	addi	s5, s5, 100				# tamanho da matriz
 	
 	lbu  	s2, (a1)				# pego valor primeira posicao = quantidade de navios	
 	addi	a1, a1, 2				# pula 2 caracter pois informacao necessaria ja adqurida na primeira linha
@@ -63,42 +64,45 @@ loop_all_caracters:
 	
 	beq   	t0, t1, loop_find_eof 			# verifica se possui \n para proxima interacao
 	
-	beq   	t0, t2, print_n 				# verifica se endereço atual é \0 e encerra for
+	beq   	t0, t2, print_n 			# verifica se endereço atual é \0 vai printar a matriz
 	
 	ret
 
 preenche_vetor_vertical:
-	sw	t0, (s1)
-	addi	s1, s1, 4
+	sw	t0, 0(s0)
+	addi	s0, s0, 40				# se for vertical escrevo na mesma posicao a cada 10 colunas
 	ret
 	
 preenche_vetor_horizontal:
-	sw	t0, (s0)
-	addi	s0, s0, 4
+	sw	t0, 0(s0)
+	addi	s0, s0, 4				# se for horizontal escrevo na mesma proxima posicao
+	
 	ret
 
 loop_matriz:
-	lw	s4, (s0)		# load value of matriz
+	lw	a4, (s8)				# carregando matriz de endereços copiada
 	
-	mv 	a0, s4  		# imprime para ver qual é a posicao atual
-	li 	a7, 1
+	mv 	a0, a4  				# imprime os valores
+	li 	a7, 11
 	ecall	
-	addi	s0, s0, 4
-	addi	s3, s3, 1
-	remu	s6, s3, s4
-	beq	s3, s5, fim
-	beqz	s6, print_n
-	j 	loop_matriz
+	
+	li 	a0, ' '					# imprime espaço para ficar melhor visualmente
+	li 	a7, 11
+	ecall	
+	
+	addi	s8, s8, 4				# vou para proxima posicao do vetor copiado
+	addi	s3, s3, 1				# autoincremento meu for
+	remu	s6, s3, s4				# pego resto da divisão do autoincrementro / 10
+	beq	s3, s5, fim				# vejo se o for precisa ser parado
+	beqz	s6, print_n				# vejo se o resto do autoincremento / 10 = 0 para adicionar \n
+	j 	loop_matriz				# percorro o proximo elemento
 	
 print_n:
 
-	mv 	a0, s3  		# imprime para ver qual é a posicao atual
-	li 	a7, 1
-	ecall	
-	li 	a0, '\n'
+	li 	a0, '\n'				# printo \n
 	li 	a7, 11
 	ecall	
-	ret
+	j 	loop_matriz				#volto pra matriz
 	
 fim:
 
