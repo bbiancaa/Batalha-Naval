@@ -2,7 +2,7 @@
 
 msg_comum:	.asciz "Entre com o valor de "
 ships:		.asciz "3\n1511\n0522\n0164"
-n:			.asciz "\n"	
+n:		.asciz "\n"	
 lines:		.word 10
 columns:	.word 10
 
@@ -18,15 +18,17 @@ main:
 	
 	li  	t1, '\n'			# grava \n
 	li  	t2, '\0'			# grava eof
+	li  	t3, '0'				# horizontal
+	li  	t4, '1'				# vertical
 	j	insere_embarcacoes		# chama função insere_embarcacoes:
 
 
 insere_embarcacoes:  
 
-	beq   	t0, t1, loop_find_eof 		# verifica se possui \n para proxima interacao
+	lbu  	t0, (a1)			# estende endereco de memoria atual de a1 para t0
 	
-	beqz	t0, insere_na_horizontal		# insere navio na horizontal
-	bgez	t0, insere_na_vertical		# insere navio na vertical
+	beq	t0, t3, insere_na_horizontal		# insere navio na horizontal
+	beq	t0, t4, insere_na_vertical		# insere navio na vertical
 	
 
 
@@ -40,26 +42,32 @@ insere_na_horizontal:
 	beq   	t0, t1, loop_find_eof 		# verifica se possui \n para proxima interacao
 	jal	loop_all_caracters
 
+	j insere_na_horizontal
+	
 
 insere_na_vertical:
+
 	beq   	t0, t1, loop_find_eof 		# verifica se possui \n para proxima interacao
-	j	loop_all_caracters
+	jal	loop_all_caracters
+	
+	mv 	a0, t0  			# imprime para ver qual é a posicao atual
+	li 	a7, 11
+	ecall	
+	
+	j insere_na_vertical
 	
 loop_all_caracters:
 
 	lbu  	t0, (a1)			# estende endereco de memoria atual de a1 para t0
 	addi 	a1, a1, 1			# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
 	
-	mv 	a0, t0  			# imprime para ver qual é a posicao atual
-	li 	a7, 11
-	ecall	
-	
 	
 	beq   	t0, t1, loop_find_eof 		# verifica se possui \n para proxima interacao
 	
-	beq   	t0, t2, fim 			# verifica se endereço atual é /0 e encerra se for
+	beq   	t0, t2, fim 			# verifica se endereço atual é \0 e encerra for
 	
 	ret
+	
 fim:
 	nop
 	
