@@ -1,10 +1,10 @@
 .data
 
-msg_comum:	.asciz "Entre com o valor de "
-ships:		.asciz "3\n1511\n0522\n0164"
-n:		.asciz "\n"	
-lines:		.word 10
-columns:	.word 10
+msg_comum:						.asciz "Entre com o valor de "
+ships:							.asciz "3\n1511\n0522\n0164"
+n:							.asciz "\n"	
+lines:							.word 10
+columns:						.word 10
 
 .text
 main:
@@ -40,14 +40,14 @@ loop_find_eof:
 
 insere_na_horizontal:
 	jal	loop_all_caracters
-
-	j insere_na_horizontal				# funcao recursiva para percorrer toda a linha
+	jal	preenche_vetor_horizontal
+	j 	insere_na_horizontal			# funcao recursiva para percorrer toda a linha
 	
 
 insere_na_vertical:
 
 	jal	loop_all_caracters
-	
+	jal	preenche_vetor_vertical
 	mv 	a0, t0  				# imprime para ver qual é a posicao atual
 	li 	a7, 11
 	ecall	
@@ -65,7 +65,16 @@ loop_all_caracters:
 	beq   	t0, t2, fim 				# verifica se endereço atual é \0 e encerra for
 	
 	ret
+
+preenche_vetor_vertical:
+	sw	t0, (s1)
+	addi	s1, s1, 4
+	ret
 	
+preenche_vetor_horizontal:
+	sw	t0, (s0)
+	addi	s0, s0, 4
+	ret
 fim:
 	nop
 	
