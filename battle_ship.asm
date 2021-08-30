@@ -11,28 +11,39 @@ main:
 	la	a1, ships			# lê endereço do vetor
 	la	s0, lines
 	la 	s1, columns
+	add	s3, s3, zero
 	
 	lbu  	s2, (a1)			# pego valor primeira posicao = quantidade de navios	
 	addi	a1, a1, 2			# pula 2 caracter pois informacao necessaria ja adqurida na primeira linha
 	
 	li  	t1, '\n'			# grava \n
 	li  	t2, '\0'			# grava eof
-	jal	insere_embarcacoes		# chama função insere_embarcacoes:
+	j	insere_embarcacoes		# chama função insere_embarcacoes:
 
 
 insere_embarcacoes:  
 
 	beq   	t0, t1, loop_find_eof 		# verifica se possui \n para proxima interacao
 	
-	jal	loop_all_caracters		# percorre toda a string
+	beqz	t0, insere_na_horizontal		# insere navio na horizontal
+	bgez	t0, insere_na_vertical		# insere navio na vertical
 	
 
 
-
 loop_find_eof:
-
 	lbu  	t0, (a1)			# estende endereco de memoria atual de a1 para t0
-	jal insere_embarcacoes			# volta para inserir embarcacoes
+	j	insere_embarcacoes
+	
+	
+
+insere_na_horizontal:
+	beq   	t0, t1, loop_find_eof 		# verifica se possui \n para proxima interacao
+	jal	loop_all_caracters
+
+
+insere_na_vertical:
+	beq   	t0, t1, loop_find_eof 		# verifica se possui \n para proxima interacao
+	j	loop_all_caracters
 	
 loop_all_caracters:
 
@@ -43,11 +54,12 @@ loop_all_caracters:
 	li 	a7, 11
 	ecall	
 	
-	addi 	s9, a1, 1			# verifica se esta no final da string \0 para evitar loop infinito
-	lbu  	s10, (s9)
-	beq   	s10, t2, fim 
 	
-	jal insere_embarcacoes			#se nao continua percorrendo 
+	beq   	t0, t1, loop_find_eof 		# verifica se possui \n para proxima interacao
+	
+	beq   	t0, t2, fim 			# verifica se endereço atual é /0 e encerra se for
+	
+	ret
 fim:
 	nop
 	
