@@ -5,13 +5,16 @@ ships:							.asciz "3\n1511\n0522\n0164"
 n:							.asciz "\n"	
 lines:							.word 10
 columns:						.word 10
+matriz:							.word 100 #pensando em uma maneira diferente de salvar os valores
 
 .text
 main:
 	la	a1, ships				# lê endereço do vetor
-	la	s0, lines
+	la	s0, matriz
 	la 	s1, columns
 	add	s3, s3, zero
+	addi	s4, s4, 10
+	addi	s5, s5, 100
 	
 	lbu  	s2, (a1)				# pego valor primeira posicao = quantidade de navios	
 	addi	a1, a1, 2				# pula 2 caracter pois informacao necessaria ja adqurida na primeira linha
@@ -29,6 +32,7 @@ insere_embarcacoes:
 	
 	beq	t0, t3, insere_na_horizontal		# insere navio na horizontal
 	beq	t0, t4, insere_na_vertical		# insere navio na vertical
+	j	loop_matriz
 	
 
 
@@ -48,9 +52,6 @@ insere_na_vertical:
 
 	jal	loop_all_caracters
 	jal	preenche_vetor_vertical
-	mv 	a0, t0  				# imprime para ver qual é a posicao atual
-	li 	a7, 11
-	ecall	
 	
 	j insere_na_vertical				# funcao recursiva para percorrer toda a linha
 	
@@ -62,7 +63,7 @@ loop_all_caracters:
 	
 	beq   	t0, t1, loop_find_eof 			# verifica se possui \n para proxima interacao
 	
-	beq   	t0, t2, fim 				# verifica se endereço atual é \0 e encerra for
+	beq   	t0, t2, print_n 				# verifica se endereço atual é \0 e encerra for
 	
 	ret
 
@@ -75,6 +76,31 @@ preenche_vetor_horizontal:
 	sw	t0, (s0)
 	addi	s0, s0, 4
 	ret
+
+loop_matriz:
+	lw	s4, (s0)		# load value of matriz
+	
+	mv 	a0, s4  		# imprime para ver qual é a posicao atual
+	li 	a7, 1
+	ecall	
+	addi	s0, s0, 4
+	addi	s3, s3, 1
+	remu	s6, s3, s4
+	beq	s3, s5, fim
+	beqz	s6, print_n
+	j 	loop_matriz
+	
+print_n:
+
+	mv 	a0, s3  		# imprime para ver qual é a posicao atual
+	li 	a7, 1
+	ecall	
+	li 	a0, '\n'
+	li 	a7, 11
+	ecall	
+	ret
+	
 fim:
+
 	nop
 	
