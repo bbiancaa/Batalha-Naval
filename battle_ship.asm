@@ -1,6 +1,8 @@
 .data
 
 ships:							.asciz "3\n1511\n0522\n0164"
+columns:							.asciz "0 1 2 3 4 5 6 7 8 9\n"
+lines:							.asciz "0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
 n:							.asciz "\n"
 matriz:							.word 100 #pensando em uma maneira diferente de salvar os valores
 
@@ -10,6 +12,7 @@ main:
 	la	s0, matriz				# le matriz para ser escrita
 	la	s9, matriz				# le matriz para ser escrita
 	la	s8, matriz				# le matriz para ser printada
+	la	s7, columns				# le matriz para ser printada
 	add	s3, s3, zero				# autoincrement para for de printar
 	addi	s4, s4, 10				# valor para adicionar \n
 	addi	s5, s5, 100				# tamanho da matriz
@@ -27,16 +30,18 @@ main:
 
 
 insere_embarcacoes:  
-
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
+	
+	add	s1, zero, zero				# reseto contador para linha
+	beq   	t0, t1, loop_find_eof 			# verifica se possui \n para proxima interacao
+	beq   	t0, t2, loop_matriz 			# verifica se endereço atual é \0 vai printar a matriz
 	beq	t0, t3, insere_na_horizontal		# insere navio na horizontal
 	beq	t0, t4, insere_na_vertical		# insere navio na vertical
-	j	loop_matriz
 	
 
 
 loop_find_eof:
-	add	s1, s1, zero				# reseto contador para linha
+	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	j	insere_embarcacoes
 	
@@ -45,6 +50,7 @@ loop_find_eof:
 insere_na_horizontal:
 	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
+	
 	add	a2, a2, zero				# tamanho do navio
 	addi 	a2, t0, -48				# coloca o tamanho do navio lido na linha converte pra int e grava
 	
@@ -64,7 +70,8 @@ insere_na_horizontal:
 	add	a5, t5, a4				# somo a coluna com a linha pra saber posicao na matriz
 	mul	a5, a5, t6				# multiplco * 4 para ter posicao na memoria correta
 	
-	jal	preenche_vetor_horizontal
+	add	s9, s9, a5
+	j	preenche_vetor_horizontal
 	
 
 insere_na_vertical:
@@ -91,7 +98,11 @@ insere_na_vertical:
 	add	a5, t5, a4				# somo a coluna com a linha pra saber posicao na matriz
 	mul	a5, a5, t6				# multiplco * 4 para ter posicao na memoria correta
 	
-	jal	preenche_vetor_vertical
+	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
+	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
+	
+	add	s9, s9, a5
+	j	preenche_vetor_vertical
 	
 	
 loop_all_caracters:
@@ -104,27 +115,32 @@ loop_all_caracters:
 	
 	beq   	t0, t2, loop_matriz 			# verifica se endereço atual é \0 vai printar a matriz
 	
-	ret
 
 preenche_vetor_vertical:
 	beq	s1, a2, insere_embarcacoes		# se o tamanho do navio ja tiver completo
 	addi	s1, s1, 1				# auto incremento
-	add	s9, s9, a5
-	sw	t0, 0(s9)
+	sw	t4, 0(s9)
 	addi	s9, s9, 40				# se for vertical escrevo na mesma posicao a cada 10 colunas
 	j	preenche_vetor_vertical
 	
 preenche_vetor_horizontal:
 	beq	s1, a2, insere_embarcacoes		# se o tamanho do navio ja tiver completo
 	addi	s1, s1, 1				# auto incremento
-	add	s9, s9, a5
-	sw	t0, 0(s9)
-	addi	s9, s9, 4				# se for vertical escrevo na mesma posicao a cada 10 colunas
+	sw	t3, 0(s9)
+	addi	s9, s9, 4				# se for horizontal escrevo na proxima posicao
 	j	preenche_vetor_horizontal
 
 
-
+header:
+	mv 	a0, s7  				# imprime os valores
+	li 	a7, 4
+	ecall	
+	
+	addi	s3, s3, 1				# autoincremento meu for
+	j loop_matriz
+	
 loop_matriz:
+	beqz	s3, header
 	lw	a6, (s8)				# carregando matriz de endereços copiada
 	
 	mv 	a0, a6  				# imprime os valores
