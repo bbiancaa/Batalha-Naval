@@ -8,10 +8,12 @@ matriz:							.word 100 #pensando em uma maneira diferente de salvar os valores
 main:
 	la	a1, ships				# lê endereço do vetor
 	la	s0, matriz				# le matriz para ser escrita
+	la	s9, matriz				# le matriz para ser escrita
 	la	s8, matriz				# le matriz para ser printada
 	add	s3, s3, zero				# autoincrement para for de printar
 	addi	s4, s4, 10				# valor para adicionar \n
 	addi	s5, s5, 100				# tamanho da matriz
+	addi	t6, t6, 4				# para coluna
 	
 	add	s1, s1, zero				# contador para linha
 	lbu  	s2, (a1)				# pego valor primeira posicao = quantidade de navios	
@@ -58,9 +60,11 @@ insere_na_horizontal:
 	add	a4, a4, zero				# coluna do navio
 	addi	a4, t0, -48				# coloca o tamanho do navio lido na linha converte pra int e grava
 	
-	jal	loop_all_caracters
+	mul	t5, a3, s4				# multiplico pra ter a coluna inicial
+	add	a5, t5, a4				# somo a coluna com a linha pra saber posicao na matriz
+	mul	a5, a5, t6				# multiplco * 4 para ter posicao na memoria correta
+	
 	jal	preenche_vetor_horizontal
-	j 	insere_na_horizontal			# funcao recursiva para percorrer toda a linha
 	
 
 insere_na_vertical:
@@ -83,10 +87,12 @@ insere_na_vertical:
 	addi	a4, t0, -48				# coloca o tamanho do navio lido na linha converte pra int e grava
 	
 	
-	jal	loop_all_caracters
+	mul	t5, a3, s4				# multiplico pra ter a coluna inicial
+	add	a5, t5, a4				# somo a coluna com a linha pra saber posicao na matriz
+	mul	a5, a5, t6				# multiplco * 4 para ter posicao na memoria correta
+	
 	jal	preenche_vetor_vertical
 	
-	j 	insere_na_vertical			# funcao recursiva para percorrer toda a linha
 	
 loop_all_caracters:
 
@@ -101,15 +107,20 @@ loop_all_caracters:
 	ret
 
 preenche_vetor_vertical:
-	sw	t0, 0(s0)
-	addi	s0, s0, 40				# se for vertical escrevo na mesma posicao a cada 10 colunas
-	ret
+	beq	s1, a2, insere_embarcacoes		# se o tamanho do navio ja tiver completo
+	addi	s1, s1, 1				# auto incremento
+	add	s9, s9, a5
+	sw	t0, 0(s9)
+	addi	s9, s9, 40				# se for vertical escrevo na mesma posicao a cada 10 colunas
+	j	preenche_vetor_vertical
 	
 preenche_vetor_horizontal:
-	sw	t0, 0(s0)
-	addi	s0, s0, 4				# se for horizontal escrevo na mesma proxima posicao
-	
-	ret
+	beq	s1, a2, insere_embarcacoes		# se o tamanho do navio ja tiver completo
+	addi	s1, s1, 1				# auto incremento
+	add	s9, s9, a5
+	sw	t0, 0(s9)
+	addi	s9, s9, 4				# se for vertical escrevo na mesma posicao a cada 10 colunas
+	j	preenche_vetor_horizontal
 
 
 
@@ -141,5 +152,4 @@ print_n:
 	
 	
 fim:
-
 	nop
