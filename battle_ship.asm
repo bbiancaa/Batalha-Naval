@@ -28,6 +28,7 @@ main:
 
 insere_embarcacoes:  
 	la	s9, matriz				# le matriz para ser escrita
+	addi	s9, s9, 4				# evitando erro de lixo na memoria
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	
 	add	s1, zero, zero				# reseto contador para linha
@@ -102,18 +103,6 @@ insere_na_vertical:
 	add	s9, s9, a5
 	j	preenche_vetor_vertical
 	
-	
-loop_all_caracters:
-
-	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
-	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
-	
-	
-	beq   	t0, t1, loop_find_eof 			# verifica se possui \n para proxima interacao
-	
-	beq   	t0, t2, loop_matriz 			# verifica se endereço atual é \0 vai printar a matriz
-	
-
 preenche_vetor_vertical:
 	beq	s1, a2, insere_embarcacoes		# se o tamanho do navio ja tiver completo
 	addi	s1, s1, 1				# auto incremento
