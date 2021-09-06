@@ -10,7 +10,6 @@ matriz:							.word 100 #pensando em uma maneira diferente de salvar os valores
 main:
 	la	a1, ships				# lê endereço do vetor
 	la	s0, matriz				# le matriz para ser escrita
-	la	s9, matriz				# le matriz para ser escrita
 	la	s8, matriz				# le matriz para ser printada
 	la	s7, columns				# le matriz para ser printada
 	add	s3, s3, zero				# autoincrement para for de printar
@@ -30,6 +29,7 @@ main:
 
 
 insere_embarcacoes:  
+	la	s9, matriz				# le matriz para ser escrita
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	
 	add	s1, zero, zero				# reseto contador para linha
