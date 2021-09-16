@@ -1,6 +1,6 @@
 .data
 
-ships:							.asciz "3\n1511\n0522\n0164"
+ships:							.asciz "3 \n 1 5 1 1 \n 0 5 2 2 \n 0 1 6 4"
 columns:						.asciz "0 1 2 3 4 5 6 7 8 9\n"
 lines:							.asciz "0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
 n:							.asciz "\n"
@@ -24,13 +24,25 @@ main:
 	li  	t3, '0'					# horizontal
 	li  	t4, '1'					# vertical
 	j	insere_embarcacoes			# chama função insere_embarcacoes:
-
-
+	
+	
+verifica_vazio:
+	addi 	a6, zero, 32
+	
+	mv 	a0, t0  				# imprime os valores
+	li 	a7, 1
+	ecall	
+	
+	bne 	t0, a6, fim
+	addi 	a1, a1, 1				# pula 1 endereco de memoria, se for espaco na posicao atual
+	ret
+	
 insere_embarcacoes:  
 	la	s9, matriz				# le matriz para ser escrita
 	addi	s9, s9, 4				# evitando erro de lixo na memoria
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	
+	jal	verifica_vazio
 	add	s1, zero, zero				# reseto contador para linha
 	beq   	t0, t1, loop_find_eof 			# verifica se possui \n para proxima interacao
 	beq   	t0, t2, loop_matriz 			# verifica se endereço atual é \0 vai printar a matriz
