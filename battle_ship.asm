@@ -28,12 +28,13 @@ main:
 verifica_vazio:
 	addi 	a6, zero, 32
 	
-	mv 	a0, t0  				# imprime os valores
-	li 	a7, 1
-	ecall	
+	
+	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
+	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	
 	bne 	t0, a6, fim
 	addi 	a1, a1, 1				# pula 1 endereco de memoria, se for espaco na posicao atual
+	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	ret
 	
 insere_embarcacoes:  
@@ -57,8 +58,6 @@ loop_find_eof:
 	
 
 insere_na_horizontal:
-	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
-	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	
 	jal	verifica_vazio
 	add	a2, a2, zero				# tamanho do navio
@@ -66,15 +65,11 @@ insere_na_horizontal:
 	
 	jal	verifica_vazio
 	
-	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
-	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	add	a3, a3, zero				# linha do navio
 	addi	a3, t0, -48				# coloca a linha inicial do navio lido na linha converte pra int e grava
 	
 	jal	verifica_vazio
 	
-	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
-	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	add	a4, a4, zero				# coluna do navio
 	addi	a4, t0, -48				# coloca o coluna inicial do navio lido na linha converte pra int e grava
 	
@@ -91,27 +86,25 @@ insere_na_horizontal:
 
 insere_na_vertical:
 
-	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
-	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
+	
+	jal	verifica_vazio
+	
 	add	a2, a2, zero				# tamanho do navio
 	addi 	a2, t0, -48				# coloca o tamanho do navio lido na linha converte pra int e grava
 	
 	
+	
 	jal	verifica_vazio
-	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
-	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	add	a3, a3, zero				# linha do navio
 	addi	a3, t0, -48				# coloca o linha inicial do navio lido na linha converte pra int e grava
 	
 	
+	
 	jal	verifica_vazio
-	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
-	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	add	a4, a4, zero				# coluna do navio
 	addi	a4, t0, -48				# coloca o coluna inicial do navio lido na linha converte pra int e grava
 	
 	
-	jal	verifica_vazio
 	mul	t5, a3, s4				# multiplico pra ter a coluna inicial
 	add	a5, t5, a4				# somo a coluna com a linha pra saber posicao na matriz
 	mul	a5, a5, t6				# multiplco * 4 para ter posicao na memoria correta
@@ -129,6 +122,10 @@ preenche_vetor_vertical:
 	addi	s1, s1, 1				# auto incremento
 	sw	t4, 0(s9)
 	addi	s9, s9, 40				# se for vertical escrevo na mesma posicao a cada 10 colunas
+	
+	mv 	a0, t4  				# imprime os valores
+	li 	a7, 1
+	ecall	
 	j	preenche_vetor_vertical
 	
 preenche_vetor_horizontal:
