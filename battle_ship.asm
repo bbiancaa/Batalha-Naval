@@ -64,23 +64,20 @@ insere_na_horizontal:
 	addi 	a2, t0, -48				# coloca o tamanho do navio lido na linha converte pra int e grava
 	
 	jal	verifica_vazio
-	
 	add	a3, a3, zero				# linha do navio
 	addi	a3, t0, -48				# coloca a linha inicial do navio lido na linha converte pra int e grava
 	
 	jal	verifica_vazio
-	
 	add	a4, a4, zero				# coluna do navio
 	addi	a4, t0, -48				# coloca o coluna inicial do navio lido na linha converte pra int e grava
 	
-	jal	verifica_vazio
 	mul	t5, a3, s4				# multiplico pra ter a coluna inicial
 	add	a5, t5, a4				# somo a coluna com a linha pra saber posicao na matriz
 	mul	a5, a5, t6				# multiplco * 4 para ter posicao na memoria correta
 	
+	jal	verifica_vazio
 	add	s9, s9, a5
 	
-	jal	verifica_vazio
 	j	preenche_vetor_horizontal
 	
 
@@ -109,8 +106,6 @@ insere_na_vertical:
 	add	a5, t5, a4				# somo a coluna com a linha pra saber posicao na matriz
 	mul	a5, a5, t6				# multiplco * 4 para ter posicao na memoria correta
 	
-	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
-	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	
 	jal	verifica_vazio
 	add	s9, s9, a5
