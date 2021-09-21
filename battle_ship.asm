@@ -43,7 +43,6 @@ insere_embarcacoes:
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	
 	add	s1, zero, zero				# reseto contador para linha
-	
 	beq   	t0, t1, loop_find_eof 			# verifica se possui \n para proxima interacao
 	beq   	t0, t2, loop_matriz 			# verifica se endereço atual é \0 vai printar a matriz
 	beq	t0, t3, insere_na_horizontal		# insere navio na horizontal
@@ -170,8 +169,8 @@ print_n:
 	
 		
 fim_error:
-	la	s7, error				# le matriz para ser printada
-	mv 	a0, s7  				# imprime os valores
+	la	s7, error				# le erro
+	mv 	a0, s7  				# imprime os vetor de char
 	li 	a7, 4
 	ecall	
 	nop
