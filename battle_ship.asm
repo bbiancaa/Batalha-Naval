@@ -23,8 +23,8 @@ main:
 	li  	t2, '\0'				# grava eof
 	li  	t3, '0'					# horizontal
 	li  	t4, '1'					# vertical
+	li  	s11, 'A'	 
 	j	insere_embarcacoes			# chama função insere_embarcacoes:
-	
 	
 verifica_vazio:
 	addi 	a6, zero, 32
@@ -37,20 +37,25 @@ verifica_vazio:
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	ret
 	
-insere_embarcacoes:  
+insere_embarcacoes:
 	la	s9, matriz				# le matriz para ser escrita
 	addi	s9, s9, 4				# evitando erro de lixo na memoria
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	
 	add	s1, zero, zero				# reseto contador para linha
+	
 	beq   	t0, t1, loop_find_eof 			# verifica se possui \n para proxima interacao
 	beq   	t0, t2, loop_matriz 			# verifica se endereço atual é \0 vai printar a matriz
 	beq	t0, t3, insere_na_horizontal		# insere navio na horizontal
 	beq	t0, t4, insere_na_vertical		# insere navio na vertical
 	
+	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
+	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
+	j	insere_embarcacoes
 
 
 loop_find_eof:
+	addi	s11, s11, 1  
 	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	j	insere_embarcacoes
@@ -115,7 +120,7 @@ insere_na_vertical:
 preenche_vetor_vertical:
 	beq	s1, a2, insere_embarcacoes		# se o tamanho do navio ja tiver completo
 	addi	s1, s1, 1				# auto incremento
-	sw	t4, 0(s9)
+	sw	s11, 0(s9)
 	addi	s9, s9, 40				# se for vertical escrevo na mesma posicao a cada 10 colunas
 	
 	j	preenche_vetor_vertical
@@ -123,7 +128,7 @@ preenche_vetor_vertical:
 preenche_vetor_horizontal:
 	beq	s1, a2, insere_embarcacoes		# se o tamanho do navio ja tiver completo
 	addi	s1, s1, 1				# auto incremento
-	sw	t3, 0(s9)
+	sw	s11, 0(s9)
 	addi	s9, s9, 4				# se for horizontal escrevo na proxima posicao
 	j	preenche_vetor_horizontal
 
