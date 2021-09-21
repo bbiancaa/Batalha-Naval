@@ -33,8 +33,6 @@ verifica_vazio:
 	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	
-	bne 	t0, a6, fim_error
-	beq   	t0, t2, loop_matriz 			# verifica se endereço atual é \0 vai printar a matriz
 	addi 	a1, a1, 1				# pula 1 endereco de memoria, se for espaco na posicao atual
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	ret
