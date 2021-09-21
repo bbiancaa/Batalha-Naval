@@ -1,9 +1,10 @@
 .data
-matriz:							.word 	100 #pensando em uma maneira diferente de salvar os valores
+
 ships:							.asciz 	"3 \n 1 5 1 1 \n 0 5 2 2 \n 0 1 6 4 "
 columns:						.asciz 	"0 1 2 3 4 5 6 7 8 9\n"
 lines:							.asciz 	"0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
 n:							.asciz 	"\n"
+matriz:							.word 	100 #pensando em uma maneira diferente de salvar os valores
 
 .text
 main:
