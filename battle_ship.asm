@@ -1,14 +1,13 @@
 .data
-matriz:							.word 100 #pensando em uma maneira diferente de salvar os valores
-ships:							.asciz "3 \n 1 5 1 1 \n 0 5 2 2 \n 0 1 6 4"
-columns:						.asciz "0 1 2 3 4 5 6 7 8 9\n"
-lines:							.asciz "0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
-n:							.asciz "\n"
+matriz:							.word 	100 #pensando em uma maneira diferente de salvar os valores
+ships:							.asciz 	"3 \n 1 5 1 1 \n 0 5 2 2 \n 0 1 6 4 "
+columns:						.asciz 	"0 1 2 3 4 5 6 7 8 9\n"
+lines:							.asciz 	"0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
+n:							.asciz 	"\n"
 
 .text
 main:
 	la	a1, ships				# lê endereço do vetor
-	la	s7, columns				# le matriz para ser printada
 	add	s3, s3, zero				# autoincrement para for de printar
 	addi	s4, s4, 10				# valor para adicionar \n
 	addi	s5, s5, 100				# tamanho da matriz
@@ -118,9 +117,6 @@ preenche_vetor_vertical:
 	sw	t4, 0(s9)
 	addi	s9, s9, 40				# se for vertical escrevo na mesma posicao a cada 10 colunas
 	
-	mv 	a0, t4  				# imprime os valores
-	li 	a7, 1
-	ecall	
 	j	preenche_vetor_vertical
 	
 preenche_vetor_horizontal:
@@ -132,6 +128,7 @@ preenche_vetor_horizontal:
 
 
 header:
+	la	s7, columns				# le matriz para ser printada
 	mv 	a0, s7  				# imprime os valores
 	li 	a7, 4
 	ecall	
