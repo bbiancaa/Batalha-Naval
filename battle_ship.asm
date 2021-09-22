@@ -1,6 +1,6 @@
 .data
 
-ships:							.asciz 	"3 \n 1 5 1 1 \n 0 5 2 2 \n 0 1 6 4"
+ships:							.asciz 	"3 \n 1 5 1 1 \n 0 5 2 2 \n 0 1 6 4 "
 error:							.asciz 	"Entrada invalida"
 columns:						.asciz 	"0 1 2 3 4 5 6 7 8 9\n"
 lines:							.asciz 	"0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
@@ -32,7 +32,7 @@ verifica_vazio:
 	
 	addi 	a1, a1, 1				# pula 1 endereco de memoria, aqui por ser string cada posicao tem 8 bits
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
-	
+	bne	t0, a6, fim_error			# verifica se proxima posicao n for ' ' printa erro
 	addi 	a1, a1, 1				# pula 1 endereco de memoria, se for espaco na posicao atual
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	ret
@@ -173,6 +173,7 @@ fim_error:
 	mv 	a0, s7  				# imprime os vetor de char
 	li 	a7, 4
 	ecall	
+	
 	nop
 	
 fim:
