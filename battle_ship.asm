@@ -41,9 +41,9 @@ verifica_vazio:
 verifica_tam:
 	addi 	a6, zero, 10
 	add	s7, a2, a4
-	bgt  	s7, a6, fim_error_tam
+	bge   	s7, a6, fim_error_tam
 	add	s7, a2, a3
-	bgt  	s7, a6, fim_error_tam
+	bge  	s7, a6, fim_error_tam
 	ret
 
 insere_embarcacoes:
