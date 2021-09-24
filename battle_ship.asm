@@ -2,11 +2,12 @@
 
 ships:							.asciz 	"3 \n 1 5 1 1 \n 0 5 2 2 \n 0 1 6 4 "
 error:							.asciz 	"Entrada invalida"
+error_sobreposicao:					.asciz  "Sobreposição nos navios"
+error_tam:						.asciz  "O navio extrapola as dimensões da matriz"
 columns:						.asciz 	"0 1 2 3 4 5 6 7 8 9\n"
 lines:							.asciz 	"0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
 n:							.asciz 	"\n"
 matriz:							.word 	100 #pensando em uma maneira diferente de salvar os valores
-
 .text
 main:
 	la	a1, ships				# lê endereço do vetor
@@ -36,7 +37,15 @@ verifica_vazio:
 	addi 	a1, a1, 1				# pula 1 endereco de memoria, se for espaco na posicao atual
 	lbu  	t0, (a1)				# estende endereco de memoria atual de a1 para t0
 	ret
-	
+
+verifica_tam:
+	addi 	a6, zero, 10
+	add	s7, a2, a4
+	bgt  	s7, a6, fim_error_tam
+	add	s7, a2, a3
+	bgt  	s7, a6, fim_error_tam
+	ret
+
 insere_embarcacoes:
 	la	s9, matriz				# le matriz para ser escrita
 	addi	s9, s9, 4				# evitando erro de lixo na memoria
@@ -81,7 +90,7 @@ insere_na_horizontal:
 	
 	jal	verifica_vazio
 	add	s9, s9, a5
-	
+	jal	verifica_tam
 	j	preenche_vetor_horizontal
 	
 
@@ -113,14 +122,19 @@ insere_na_vertical:
 	
 	jal	verifica_vazio
 	add	s9, s9, a5
-	
+	jal 	verifica_tam
 	j	preenche_vetor_vertical
 	
 preenche_vetor_vertical:
 	beq	s1, a2, insere_embarcacoes		# se o tamanho do navio ja tiver completo
-	addi	s1, s1, 1				# auto incremento
+	addi	s1, s1, 1	
+	
+	lw 	a6, 0(s9)				# pega valor em s9
+	bne	a6, zero, fim_error_choque		# se valor diferente de 0 ja existe navio entao choque de navios
 	sw	s11, 0(s9)
+	
 	addi	s9, s9, 40				# se for vertical escrevo na mesma posicao a cada 10 colunas
+	
 	
 	j	preenche_vetor_vertical
 	
@@ -173,8 +187,23 @@ fim_error:
 	mv 	a0, s7  				# imprime os vetor de char
 	li 	a7, 4
 	ecall	
+	j	fim
 	
-	nop
+fim_error_choque:
+
+	la 	s7, error_sobreposicao				# le erro
+	mv 	a0, s7  				# imprime os vetor de char
+	li 	a7, 4
+	ecall	
+	j	fim
+	
+fim_error_tam:
+
+	la 	s7, error_tam				# le erro
+	mv 	a0, s7  				# imprime os vetor de char
+	li 	a7, 4
+	ecall	
+	j	fim
 	
 fim:
 	nop
