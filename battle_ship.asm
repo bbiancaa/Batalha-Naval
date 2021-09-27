@@ -4,10 +4,14 @@ ships:							.asciz 	"3 \n 1 5 1 1 \n 0 5 2 2 \n 0 1 6 4 "
 error:							.asciz 	"Entrada invalida"
 error_sobreposicao:					.asciz  "Sobreposição nos navios"
 error_tam:						.asciz  "O navio extrapola as dimensões da matriz"
+error_tiro:						.asciz  "\n\nVoce errou seu tiro\n"
+acertou_navio:						.asciz  "\n\nVoce acertou um navio\n"
 columns:						.asciz 	"0 1 2 3 4 5 6 7 8 9\n"
-lines:							.asciz 	"0\n1\n2\n3\n4\n5\n6\n7\n8\n9"
-n:							.asciz 	"\n"
-matriz:							.word 	100 #pensando em uma maneira diferente de salvar os valores
+msg_Linha:						.asciz  "Digite o numero da linha pro tiro: "
+msg_Coluna:						.asciz  "Digite o numero da coluna pro tiro: "
+matriz:							.word 	100 # matriz q vai ser escrita os navios
+matriz_jogo:						.word 	100 # matriz q vai aparecer durante jogo
+	
 .text
 main:
 	la	a1, ships				# lê endereço do vetor
@@ -53,7 +57,7 @@ insere_embarcacoes:
 	
 	add	s1, zero, zero				# reseto contador para linha
 	beq   	t0, t1, loop_find_eof 			# verifica se possui \n para proxima interacao
-	beq   	t0, t2, loop_matriz 			# verifica se endereço atual é \0 vai printar a matriz
+	beq   	t0, t2, inicia_game			# verifica se endereço atual é \0 vai printar a matriz
 	beq	t0, t3, insere_na_horizontal		# insere navio na horizontal
 	beq	t0, t4, insere_na_vertical		# insere navio na vertical
 	
@@ -95,8 +99,6 @@ insere_na_horizontal:
 	
 
 insere_na_vertical:
-
-	
 	jal	verifica_vazio
 	
 	add	a2, a2, zero				# tamanho do navio
@@ -125,24 +127,30 @@ insere_na_vertical:
 	jal 	verifica_tam
 	j	preenche_vetor_vertical
 	
+	
 preenche_vetor_vertical:
 	beq	s1, a2, insere_embarcacoes		# se o tamanho do navio ja tiver completo
 	addi	s1, s1, 1	
 	
 	lw 	a6, 0(s9)				# pega valor em s9
 	bne	a6, zero, fim_error_choque		# se valor diferente de 0 ja existe navio entao choque de navios
-	sw	s11, 0(s9)
 	
+	sw	s11, 0(s9)
 	addi	s9, s9, 40				# se for vertical escrevo na mesma posicao a cada 10 colunas
 	
-	
 	j	preenche_vetor_vertical
+	
 	
 preenche_vetor_horizontal:
 	beq	s1, a2, insere_embarcacoes		# se o tamanho do navio ja tiver completo
 	addi	s1, s1, 1				# auto incremento
+	
+	lw 	a6, 0(s9)				# pega valor em s9
+	bne	a6, zero, fim_error_choque		# se valor diferente de 0 ja existe navio entao choque de navios
+	
 	sw	s11, 0(s9)
 	addi	s9, s9, 4				# se for horizontal escrevo na proxima posicao
+	
 	j	preenche_vetor_horizontal
 
 
@@ -181,7 +189,141 @@ print_n:
 	ecall	
 	j 	loop_matriz				#volto pra matriz
 	
+	
+inicia_game:
+	la	s8, matriz_jogo				# le matriz para jogo
+	beq	t2, s5, prepara_loop_matriz		#se foi preenchido vai printar matriz para iniciar game
+	j	preenche_vetor_jogo
+	
+preenche_vetor_jogo:
+	addi	t2, t2, 1				# autoincremento meu for
+	
+	add	s11, zero, zero
+	addi	s11, zero, 42				# valor padrao da matriz vai ser X
+	
+	sw	s11, 400, (s8)
+	addi	s8, s8, 4				# escrevo valor padrao em todas as posicoes
+	beq	t2, s5, inicia_game
+	j 	preenche_vetor_jogo
+
+
+header_jogo:
+	la	s7, columns				# le matriz para ser printada
+	mv 	a0, s7  				# imprime os valores
+	li 	a7, 4
+	ecall	
+	
+	addi	s3, s3, 1				# autoincremento meu for
+	j 	loop_matriz_jogo
+
+print_n_jogo:
+
+	li 	a0, '\n'				# printo \n
+	li 	a7, 11
+	ecall	
+	j 	loop_matriz_jogo			#volto pra matriz
+	
+
+loop_matriz_jogo:
+	beqz	s3, header_jogo
+	lw	a6, 400, (s8)				# carregando matriz de endereços copiada
+	
+	mv 	a0, a6  				# imprime os valores
+	li 	a7, 11
+	ecall	
+	
+	li 	a0, ' '					# imprime espaço para ficar melhor visualmente
+	li 	a7, 11
+	ecall	
+	
+	addi	s8, s8, 4				# vou para proxima posicao do vetor copiado
+	addi	s3, s3, 1				# autoincremento meu for
+	remu	s6, s3, s4				# pego resto da divisão do autoincrementro / 10
+	beq	s3, s5, jogo				# vejo se o for precisa ser parado
+	beqz	s6, print_n_jogo			# vejo se o resto do autoincremento / 10 = 0 para adicionar \n
+	j 	loop_matriz_jogo			# percorro o proximo elemento	
+
+jogo:
+	li 	a0, '\n'				# printo \n
+	li 	a7, 11
+	ecall	
+	
+	la 	a0, msg_Linha  # imprime mensagem
+	li 	a7, 4
+	ecall	
+ 
+	addi 	a7, zero, 5  #lê inteiro
+	ecall	
+	add 	a3, zero, a0  # carrega valor lido em a3
+	
+	la 	a0, msg_Coluna  # imprime mensagem
+	li 	a7, 4
+	ecall	
+ 
+	addi 	a7, zero, 5  #lê inteiro
+	ecall	
+	add 	a4, zero, a0  # carrega valor lido em a4
+	
+	j	valida_tiro
+
+valida_tiro:
+	
+	mul	t5, a3, s4				# multiplico pra ter a coluna inicial
+	add	a5, t5, a4				# somo a coluna com a linha pra saber posicao na matriz
+	mul	a5, a5, t6				# multiplco * 4 para ter posicao na memoria correta
+	
+	add	s9, s9, a5	
+	
+	lw 	a6, 4(s9)				# pega valor em s9
+	mv 	a0, a6  				# imprime os vetor de char
+	li 	a7, 1
+	ecall	
+	beq 	a6, s5, errou_tiro
+	bgtz	a6, acertou_tiro
+	
+acertou_tiro:
+	addi	s10, zero, 400
+	bgt  	a5, s10, fim_error 			#verifica se foi pra posicao errada
+	
+	la	s7, acertou_navio			# le msg
+	mv 	a0, s7  				# imprime os vetor de char
+	li 	a7, 4
+	ecall	
 		
+	add	s3, zero, zero				#contador
+	add	t2, zero, zero				#contador
+	la	s8, matriz_jogo
+	j	escreve_na_matriz_jogo			#procura e marca todo navio q foi acertado nesse tiro
+
+prepara_loop_matriz:
+	la	s8, matriz_jogo				# le matriz para jogo
+	la	s9, matriz				# le matriz para jogo
+	j	loop_matriz_jogo
+	
+	
+escreve_na_matriz_jogo:	
+	addi	s10, zero, 32
+	beq	a6, s10, errou_tiro
+	addi	s10, zero, 42
+	beq	a6, s10, errou_tiro
+	beqz 	a6, errou_tiro
+	
+	add	s8, s9, a5
+	sw	a6, 400,(s9)
+	j 	prepara_loop_matriz
+	
+errou_tiro:	
+	la	s7, error_tiro				# le erro
+	mv 	a0, s7  				# imprime os vetor de char
+	li 	a7, 4
+	ecall	
+	add	s3, zero, zero
+	
+	addi	s10, zero, 120
+	sw	s10, 400,(s9)
+	j 	prepara_loop_matriz
+	j	prepara_loop_matriz
+	  	  		  	  	
 fim_error:
 	la	s7, error				# le erro
 	mv 	a0, s7  				# imprime os vetor de char
