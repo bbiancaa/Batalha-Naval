@@ -1,3 +1,6 @@
+# Alunos: Bianca Gabriela Fritsch 1911100002
+#	  Diogo Baltazar do Nascimento 1921101056
+
 .data
 
 ships:							.asciz 	"3 \n 1 5 1 1 \n 0 5 2 2 \n 0 1 6 4 "
