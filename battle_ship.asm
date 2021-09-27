@@ -300,7 +300,6 @@ acertou_tiro:
 
 prepara_loop_matriz:
 	add	t2, zero, zero
-	addi	s4, zero, 10
 	la	s8, matriz_jogo				# le matriz para jogo
 	la	s9, matriz				# le matriz para jogo
 	j	loop_matriz_jogo
