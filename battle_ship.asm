@@ -190,12 +190,12 @@ print_n:
 	li 	a0, '\n'				# printo \n
 	li 	a7, 11
 	ecall	
-	j 	loop_matriz				#volto pra matriz
+	j 	loop_matriz				# volto pra matriz
 	
 	
 inicia_game:
 	la	s8, matriz_jogo				# le matriz para jogo
-	beq	t2, s5, prepara_loop_matriz		#se foi preenchido vai printar matriz para iniciar game
+	beq	t2, s5, prepara_loop_matriz		# se foi preenchido vai printar matriz para iniciar game
 	j	preenche_vetor_jogo
 	
 preenche_vetor_jogo:
@@ -251,21 +251,21 @@ jogo:
 	li 	a7, 11
 	ecall	
 	
-	la 	a0, msg_Linha  # imprime mensagem
+	la 	a0, msg_Linha  				# imprime mensagem
 	li 	a7, 4
 	ecall	
  
-	addi 	a7, zero, 5  #lê inteiro
+	addi 	a7, zero, 5  				#lê inteiro
 	ecall	
-	add 	a3, zero, a0  # carrega valor lido em a3
+	add 	a3, zero, a0  				# carrega valor lido em a3
 	
-	la 	a0, msg_Coluna  # imprime mensagem
+	la 	a0, msg_Coluna  			# imprime mensagem
 	li 	a7, 4
 	ecall	
  
-	addi 	a7, zero, 5  #lê inteiro
+	addi 	a7, zero, 5  				#lê inteiro
 	ecall	
-	add 	a4, zero, a0  # carrega valor lido em a4
+	add 	a4, zero, a0  				# carrega valor lido em a4
 	
 	j	valida_tiro
 
@@ -337,7 +337,7 @@ fim_error:
 	
 fim_error_choque:
 
-	la 	s7, error_sobreposicao				# le erro
+	la 	s7, error_sobreposicao			# le erro
 	mv 	a0, s7  				# imprime os vetor de char
 	li 	a7, 4
 	ecall	
