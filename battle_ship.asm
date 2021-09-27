@@ -248,7 +248,7 @@ jogo:
 	li 	a7, 11
 	ecall	
 	
-	la 	a0, msg_Coluna  # imprime mensagem
+	la 	a0, msg_Linha  # imprime mensagem
 	li 	a7, 4
 	ecall	
  
@@ -256,7 +256,7 @@ jogo:
 	ecall	
 	add 	a3, zero, a0  # carrega valor lido em a3
 	
-	la 	a0, msg_Linha  # imprime mensagem
+	la 	a0, msg_Coluna  # imprime mensagem
 	li 	a7, 4
 	ecall	
  
@@ -275,49 +275,54 @@ valida_tiro:
 	add	s9, s9, a5	
 	
 	lw 	a6, 0(s9)				# pega valor em s9
+	mv 	a0, a6  				# imprime os vetor de char
+	li 	a7, 11
+	ecall	
 	beq 	a6, s5, errou_tiro
 	bgtz	a6, acertou_tiro
 	
 acertou_tiro:
-	addi	s10, zero, 400
+	addi	s10, zero, 396
 	bgt  	a5, s10, fim_error 			#verifica se foi pra posicao errada
 	
-	la	s7, acertou_navio			# le erro
+	la	s7, acertou_navio			# le msg
 	mv 	a0, s7  				# imprime os vetor de char
 	li 	a7, 4
 	ecall	
-	
-	add	s3, zero, zero
-	add	t2, zero, zero
-	la	s9, matriz
+		
+	add	s3, zero, zero				#contador
+	add	t2, zero, zero				#contador
 	la	s8, matriz_jogo
-	j	procura_navio				#procura e marca todo navio q foi acertado nesse tiro
-
-procura_navio:
-	beq	t2, s5, prepara_loop_matriz
-	addi	t2, t2, 1
-	lw 	s10, 0(s9)				# pega valor em s9
-	addi	s9, s9, 4
-	beq	a6, s10, escreve_na_matriz_jogo
-	j 	procura_navio		
-
+	j	escreve_na_matriz_jogo			#procura e marca todo navio q foi acertado nesse tiro
 
 prepara_loop_matriz:
 	la	s8, matriz_jogo				# le matriz para jogo
+	la	s9, matriz				# le matriz para jogo
 	j	loop_matriz_jogo
 	
 	
-escreve_na_matriz_jogo:		
-	add	s8, zero, s9				# escrevo valor padrao em todas as 
-	sw	a6, 400,(s8)
-	j 	procura_navio
+escreve_na_matriz_jogo:	
+	addi	s10, zero, 32
+	beq	a6, s10, errou_tiro
+	addi	s10, zero, 42
+	beq	a6, s10, errou_tiro
+	beqz 	a6, errou_tiro
+	
+	add	s8, s9, a5
+	sw	a6, 396,(s9)
+	j 	prepara_loop_matriz
+	
 errou_tiro:	
 	la	s7, error_tiro				# le erro
 	mv 	a0, s7  				# imprime os vetor de char
 	li 	a7, 4
 	ecall	
 	add	s3, zero, zero
-	j	loop_matriz_jogo
+	
+	addi	s10, zero, 120
+	sw	s10, 396,(s9)
+	j 	prepara_loop_matriz
+	j	prepara_loop_matriz
 	  	  		  	  	
 fim_error:
 	la	s7, error				# le erro
