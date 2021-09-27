@@ -192,7 +192,7 @@ print_n:
 	
 inicia_game:
 	la	s8, matriz_jogo				# le matriz para jogo
-	beq	t2, s5, loop_matriz_jogo		#se foi preenchido vai printar matriz para iniciar game
+	beq	t2, s5, prepara_loop_matriz		#se foi preenchido vai printar matriz para iniciar game
 	j	preenche_vetor_jogo
 	
 preenche_vetor_jogo:
