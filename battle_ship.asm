@@ -204,7 +204,7 @@ preenche_vetor_jogo:
 	add	s11, zero, zero
 	addi	s11, zero, 42				# valor padrao da matriz vai ser X
 	
-	sw	s11, 400, (s8)
+	sw	s11, 396, (s8)
 	addi	s8, s8, 4				# escrevo valor padrao em todas as posicoes
 	beq	t2, s5, inicia_game
 	j 	preenche_vetor_jogo
@@ -216,7 +216,7 @@ header_jogo:
 	li 	a7, 4
 	ecall	
 	
-	addi	s3, s3, 1				# autoincremento meu for
+	addi	t2, t2, 1				# autoincremento meu for
 	j 	loop_matriz_jogo
 
 print_n_jogo:
@@ -228,8 +228,8 @@ print_n_jogo:
 	
 
 loop_matriz_jogo:
-	beqz	s3, header_jogo
-	lw	a6, 400, (s8)				# carregando matriz de endereços copiada
+	beqz	t2, header_jogo
+	lw	a6, 396, (s8)				# carregando matriz de endereços copiada
 	
 	mv 	a0, a6  				# imprime os valores
 	li 	a7, 11
@@ -299,6 +299,8 @@ acertou_tiro:
 	j	escreve_na_matriz_jogo			#procura e marca todo navio q foi acertado nesse tiro
 
 prepara_loop_matriz:
+	add	t2, zero, zero
+	addi	s4, zero, 10
 	la	s8, matriz_jogo				# le matriz para jogo
 	la	s9, matriz				# le matriz para jogo
 	j	loop_matriz_jogo
