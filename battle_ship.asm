@@ -274,15 +274,15 @@ valida_tiro:
 	
 	add	s9, s9, a5	
 	
-	lw 	a6, 0(s9)				# pega valor em s9
+	lw 	a6, 4(s9)				# pega valor em s9
 	mv 	a0, a6  				# imprime os vetor de char
-	li 	a7, 11
+	li 	a7, 1
 	ecall	
 	beq 	a6, s5, errou_tiro
 	bgtz	a6, acertou_tiro
 	
 acertou_tiro:
-	addi	s10, zero, 396
+	addi	s10, zero, 400
 	bgt  	a5, s10, fim_error 			#verifica se foi pra posicao errada
 	
 	la	s7, acertou_navio			# le msg
@@ -309,7 +309,7 @@ escreve_na_matriz_jogo:
 	beqz 	a6, errou_tiro
 	
 	add	s8, s9, a5
-	sw	a6, 396,(s9)
+	sw	a6, 400,(s9)
 	j 	prepara_loop_matriz
 	
 errou_tiro:	
@@ -320,7 +320,7 @@ errou_tiro:
 	add	s3, zero, zero
 	
 	addi	s10, zero, 120
-	sw	s10, 396,(s9)
+	sw	s10, 400,(s9)
 	j 	prepara_loop_matriz
 	j	prepara_loop_matriz
 	  	  		  	  	
